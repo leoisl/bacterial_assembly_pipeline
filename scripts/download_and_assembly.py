@@ -16,7 +16,7 @@ parser.add_argument('output', metavar='output', type=str, help='the output direc
 args = parser.parse_args()
 
 def download_file(url, filename):
-    response = requests.get(url, stream=True)
+    response = requests.get(f"https://{url}", stream=True)
     response.raise_for_status()  # Ensure we got an OK response
 
     with open(filename, 'wb') as f:
@@ -35,7 +35,7 @@ def compute_md5(filename):
 df = pd.read_csv(args.input_file, delimiter='\t')
 
 # Create the output directory if it doesn't exist
-os.makedirs(args.output)
+os.makedirs(args.output, exist_ok=True)
 
 for _, row in df.iterrows():
     filenames = []
