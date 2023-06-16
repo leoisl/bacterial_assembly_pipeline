@@ -17,13 +17,14 @@ rule download_and_assembly:
     threads: 1
     resources: mem_mb=lambda wildcards, attempt: 30000*attempt
     conda: "env.yaml"
+    log: "logs/download_and_assembly_{batch}.log"
     shell:
         """
         # Create the output directory
         mkdir assembly_out
 
         # Run the Python script on the TSV file
-        python scripts/download_and_assembly.py {input.tsv_file} assembly_out
+        python scripts/download_and_assembly.py {input.tsv_file} assembly_out 2>{log}
 
         # Compress the output directory using tar.gz
         tar czvf {output} -C assembly_out .

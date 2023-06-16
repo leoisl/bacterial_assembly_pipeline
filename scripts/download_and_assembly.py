@@ -4,6 +4,10 @@ import hashlib
 import argparse
 import os
 import subprocess
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Initialize the parser
 parser = argparse.ArgumentParser(description="This script downloads files from provided URLs, checks their integrity with MD5 hashes, and then assembles them with Shovill.")
@@ -16,7 +20,9 @@ parser.add_argument('output', metavar='output', type=str, help='the output direc
 args = parser.parse_args()
 
 def download_file(url, filename):
-    response = requests.get(f"https://{url}", stream=True)
+    url = f"https://{url}"
+    logging.info(f"Downloading {url}")
+    response = requests.get(url, stream=True)
     response.raise_for_status()  # Ensure we got an OK response
 
     with open(filename, 'wb') as f:
@@ -54,7 +60,7 @@ for _, row in df.iterrows():
         if md5_actual != md5_expected:
             raise ValueError(f"File {filename} MD5 check failed. Expected {md5_expected}, got {md5_actual}")
         else:
-            print(f"File {filename} downloaded and MD5 check passed.")
+            logging.info(f"File {filename} downloaded and MD5 check passed.")
 
         filenames.append(filename)
 
@@ -63,8 +69,11 @@ for _, row in df.iterrows():
     os.makedirs(outdir, exist_ok=True)
 
     # Assemble the reads with Shovill
-    subprocess.run(['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1'], check=True)
+    shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1']
+    logging.info(f"Running {' '.join(shovill_command)}")
+    subprocess.run(shovill_command, check=True)
 
     # Delete the input files
     for filename in filenames:
+        logging.info(f"Deleting {filename}")
         os.remove(filename)
