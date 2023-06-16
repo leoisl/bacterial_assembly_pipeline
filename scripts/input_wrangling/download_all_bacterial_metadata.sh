@@ -1,0 +1,1 @@
+curl -o all_bacteria_data.tsv "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&fields=ALL&query=tax_tree(2)&format=tsv"
