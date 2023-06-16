@@ -1,0 +1,4 @@
+run_accession	read_count	base_count	fastq_ftp_R1	fastq_ftp_R2	fastq_md5_R1	fastq_md5_R2
+DRR015646	13239948	2647989600	ftp.sra.ebi.ac.uk/vol1/fastq/DRR015/DRR015646/DRR015646_1.fastq.gz	ftp.sra.ebi.ac.uk/vol1/fastq/DRR015/DRR015646/DRR015646_2.fastq.gz	8dc3fd2794970b6f56b0e159cd94e85b	f23154bbeaf4709dd660ca7757ebe8e6
+DRR015648	13532473	2706494600	ftp.sra.ebi.ac.uk/vol1/fastq/DRR015/DRR015648/DRR015648_1.fastq.gz	ftp.sra.ebi.ac.uk/vol1/fastq/DRR015/DRR015648/DRR015648_2.fastq.gz	4e663e274062626e959ef3f88a5c9170	0f06d5f906e7f023fd407135192b3e07
+DRR015649	6789019	1357803800	ftp.sra.ebi.ac.uk/vol1/fastq/DRR015/DRR015649/DRR015649_1.fastq.gz	ftp.sra.ebi.ac.uk/vol1/fastq/DRR015/DRR015649/DRR015649_2.fastq.gz	e5e38327fea207a4d48a39a08f2f9076	ab7ed1695560e18ae8e9af632ec291b3
