@@ -22,7 +22,7 @@ df = df[['run_accession', 'fastq_ftp', 'fastq_md5', 'read_count', 'base_count']]
 split_df = df['fastq_ftp'].str.split(';', expand=True)
 
 # Create error dataframe
-error_df = df[split_df.iloc[:, :2].isna().any(axis=1) & ~split_df.iloc[:, 2:].isna().all(axis=1)]
+error_df = df[split_df.iloc[:, :2].isna().any(axis=1) | ~split_df.iloc[:, 2:].isna().all(axis=1)]
 error_df.to_csv(args.error_file, sep='\t', index=False)
 
 # Filter df for rows that are not in error_df
