@@ -24,7 +24,7 @@ rule download_and_assembly:
         mkdir assembly_out
 
         # Run the Python script on the TSV file
-        python scripts/download_and_assembly.py {input.tsv_file} assembly_out 2>{log}
+        python scripts/download_and_assembly.py {input.tsv_file} assembly_out >{log} 2>&1
 
         # Compress the output directory using tar.gz
         tar czvf {output} -C assembly_out .
