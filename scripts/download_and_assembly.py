@@ -82,8 +82,9 @@ for _, row in df.iterrows():
         shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1', '--force']
         logging.info(f"Running {' '.join(shovill_command)}")
         subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        logging.info(f"[SAMPLE_REPORT] SUCCESS {accession}")
     except Exception as e:
-        logging.warning(f"Skipping sample {accession} due to an error")
+        logging.info(f"[SAMPLE_REPORT] ERROR {accession}")
         logging.error("An error occurred: %s", str(e))
     finally:
         # Delete the input files
