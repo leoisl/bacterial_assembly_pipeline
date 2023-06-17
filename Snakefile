@@ -15,7 +15,7 @@ rule download_and_assembly:
         f"{output_dir}/assembly_{{batch}}.tar.gz"
     shadow: "shallow"
     threads: 1
-    resources: mem_mb=lambda wildcards, attempt: 30000*attempt
+    resources: mem_mb=lambda wildcards, attempt: 15000*attempt
     conda: "env.yaml"
     log: "logs/download_and_assembly_{batch}.log"
     shell:
