@@ -19,7 +19,7 @@ parser.add_argument('output', metavar='output', type=str, help='the output direc
 # Parse the arguments
 args = parser.parse_args()
 
-def download_file(url, filename):
+def download_file_using_ftp(url, filename):
     url = f"https://{url}"
     logging.info(f"Downloading {url}")
     response = requests.get(url, stream=True)
@@ -29,6 +29,12 @@ def download_file(url, filename):
         for chunk in response.iter_content(chunk_size=1024):
             if chunk:  # filter out keep-alive new chunks
                 f.write(chunk)
+
+def download_file_using_fire(url, filename):
+    s3_url = url.replace("ftp.sra.ebi.ac.uk/vol1/", "s3://era-public/")
+    subprocess.run(["aws", "--no-sign-request", "--endpoint-url", "https://hl.fire.sdo.ebi.ac.uk", "s3", "cp", s3_url , filename],
+                   check=True)
+
 
 def compute_md5(filename):
     hash_md5 = hashlib.md5()
@@ -52,7 +58,7 @@ for _, row in df.iterrows():
         filename = os.path.join(args.output, os.path.basename(url))
 
         # Download the file
-        download_file(url, filename)
+        download_file_using_fire(url, filename)
 
         # Compute the file's MD5 hash and compare it with the expected value
         md5_actual = compute_md5(filename)
