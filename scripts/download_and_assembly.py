@@ -56,35 +56,43 @@ os.makedirs(args.output, exist_ok=True)
 
 for _, row in df.iterrows():
     filenames = []
-    for i in range(1, 3):  # For both files R1 and R2
-        url = row['fastq_ftp_R' + str(i)]
-        md5_expected = row['fastq_md5_R' + str(i)]
+    accession = row['run_accession']
+    try:
+        for i in range(1, 3):  # For both files R1 and R2
+            url = row['fastq_ftp_R' + str(i)]
+            md5_expected = row['fastq_md5_R' + str(i)]
 
-        filename = os.path.join(args.output, os.path.basename(url))
+            filename = os.path.join(args.output, os.path.basename(url))
 
-        # Download the file
-        download_file_using_fire(url, filename)
+            # Download the file
+            download_file_using_fire(url, filename)
 
-        # Compute the file's MD5 hash and compare it with the expected value
-        md5_actual = compute_md5(filename)
+            # Compute the file's MD5 hash and compare it with the expected value
+            md5_actual = compute_md5(filename)
 
-        if md5_actual != md5_expected:
-            raise ValueError(f"File {filename} MD5 check failed. Expected {md5_expected}, got {md5_actual}")
-        else:
-            logging.info(f"File {filename} downloaded and MD5 check passed.")
+            if md5_actual != md5_expected:
+                raise ValueError(f"File {filename} MD5 check failed. Expected {md5_expected}, got {md5_actual}")
+            else:
+                logging.info(f"File {filename} downloaded and MD5 check passed.")
 
-        filenames.append(filename)
+            filenames.append(filename)
 
-    # Make output directory within the specified output directory
-    outdir = os.path.join(args.output, row['run_accession'])
-    os.makedirs(outdir, exist_ok=True)
+        # Make output directory within the specified output directory
+        outdir = os.path.join(args.output, accession)
+        os.makedirs(outdir, exist_ok=True)
 
-    # Assemble the reads with Shovill
-    shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1', '--force']
-    logging.info(f"Running {' '.join(shovill_command)}")
-    subprocess.run(shovill_command, check=True)
-
-    # Delete the input files
-    for filename in filenames:
-        logging.info(f"Deleting {filename}")
-        os.remove(filename)
+        # Assemble the reads with Shovill
+        shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1', '--force']
+        logging.info(f"Running {' '.join(shovill_command)}")
+        subprocess.run(shovill_command, check=True)
+    except Exception as e:
+        logging.warning(f"Skipping sample {accession} due to an error")
+        logging.error("An error occurred: %s", str(e))
+    finally:
+        # Delete the input files
+        for filename in filenames:
+            # Check if the file exists
+            if os.path.exists(filename):
+                # If it does, remove it
+                logging.info(f"Deleting {filename}")
+                os.remove(filename)
