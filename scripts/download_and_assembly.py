@@ -33,7 +33,9 @@ def download_file_using_ftp(url, filename):
 def download_file_using_fire(url, filename):
     s3_url = url.replace("ftp.sra.ebi.ac.uk/vol1/", "s3://era-public/")
     logging.info(f"Downloading {s3_url}")
-    subprocess.run(["aws", "--no-sign-request", "--endpoint-url", "https://hl.fire.sdo.ebi.ac.uk", "s3", "cp", s3_url , filename],
+    s3_command = ["aws", "--no-sign-request", "--endpoint-url", "https://hl.fire.sdo.ebi.ac.uk", "s3", "cp", s3_url , filename]
+    logging.info(f"Running {' '.join(s3_command)}")
+    subprocess.run(s3_command,
                    stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL,
                    check=True)
