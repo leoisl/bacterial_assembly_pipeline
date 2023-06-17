@@ -35,10 +35,7 @@ def download_file_using_fire(url, filename):
     logging.info(f"Downloading {s3_url}")
     s3_command = ["aws", "--no-sign-request", "--endpoint-url", "https://hl.fire.sdo.ebi.ac.uk", "s3", "cp", s3_url , filename]
     logging.info(f"Running {' '.join(s3_command)}")
-    subprocess.run(s3_command,
-                   stdout=subprocess.DEVNULL,
-                   stderr=subprocess.DEVNULL,
-                   check=True)
+    subprocess.run(s3_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
 
 
 def compute_md5(filename):
@@ -84,7 +81,7 @@ for _, row in df.iterrows():
         # Assemble the reads with Shovill
         shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1', '--force']
         logging.info(f"Running {' '.join(shovill_command)}")
-        subprocess.run(shovill_command, check=True)
+        subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     except Exception as e:
         logging.warning(f"Skipping sample {accession} due to an error")
         logging.error("An error occurred: %s", str(e))
