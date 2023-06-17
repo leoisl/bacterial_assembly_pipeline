@@ -69,7 +69,7 @@ for _, row in df.iterrows():
     os.makedirs(outdir, exist_ok=True)
 
     # Assemble the reads with Shovill
-    shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1']
+    shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1', '--force']
     logging.info(f"Running {' '.join(shovill_command)}")
     subprocess.run(shovill_command, check=True)
 
