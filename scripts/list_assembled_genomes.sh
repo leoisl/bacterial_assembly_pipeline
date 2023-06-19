@@ -11,7 +11,6 @@ dir=$1
 
 for file in "$dir"/*.tar.gz
 do
-    echo "Processing $file"
     tar -tf $file | grep 'contigs.fa'
 done
 
