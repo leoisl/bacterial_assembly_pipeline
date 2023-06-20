@@ -16,7 +16,7 @@ rule download_and_assembly:
         metadata=f"{output_dir}/metadata_{{batch}}.txt"
     shadow: "shallow"
     threads: 1
-    resources: mem_mb=lambda wildcards, attempt: 20000*attempt
+    resources: mem_mb=lambda wildcards, attempt: 30000*attempt
     conda: "env.yaml"
     log: "logs/download_and_assembly_{batch}.log"
     shell:
