@@ -81,7 +81,6 @@ with open(args.metadata, "w") as metadata_fh, \
 
             # Make output directory within the specified output directory
             outdir = os.path.join(args.output, accession)
-            os.makedirs(outdir, exist_ok=True)
 
             # Assemble the reads with Shovill
             shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1']
