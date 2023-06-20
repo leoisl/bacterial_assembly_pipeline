@@ -12,10 +12,11 @@ rule download_and_assembly:
     input:
         tsv_file = f"{input_dir}/data.tsv_{{batch}}.tsv"
     output:
-        f"{output_dir}/assembly_{{batch}}.tar.gz"
+        assembly_dir=f"{output_dir}/assembly_{{batch}}.tar.gz",
+        metadata=f"{output_dir}/metadata_{{batch}}.txt"
     shadow: "shallow"
     threads: 1
-    resources: mem_mb=lambda wildcards, attempt: 15000*attempt
+    resources: mem_mb=lambda wildcards, attempt: 20000*attempt
     conda: "env.yaml"
     log: "logs/download_and_assembly_{batch}.log"
     shell:
@@ -24,8 +25,9 @@ rule download_and_assembly:
         mkdir assembly_out
 
         # Run the Python script on the TSV file
-        python scripts/download_and_assembly.py {input.tsv_file} assembly_out >{log} 2>&1
+        python scripts/download_and_assembly.py {input.tsv_file} assembly_out metadata.tsv >{log} 2>&1
 
         # Compress the output directory using tar.gz
-        tar czvf {output} -C assembly_out .
+        tar czvf {output.assembly_dir} -C assembly_out .
+        cp metadata.tsv {output.metadata}
         """
