@@ -6,6 +6,7 @@ import os
 import subprocess
 import logging
 import tempfile
+import shutil
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -79,13 +80,16 @@ with open(args.metadata, "w") as metadata_fh, \
 
                 filenames.append(filename)
 
-            # Make output directory within the specified output directory
-            outdir = os.path.join(args.output, accession)
-
             # Assemble the reads with Shovill
-            shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1']
+            temp_outdir = os.path.join(tempdir, accession)
+            shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', temp_outdir, '--cpus', '1']
             logging.info(f"Running {' '.join(shovill_command)}")
             subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+
+            # copy temp_outdir to outdir
+            outdir = os.path.join(args.output, accession)
+            shutil.copytree(temp_outdir, outdir)
+
             logging.info(f"[SAMPLE_REPORT] SUCCESS {accession}")
             print(f"{accession}\tSUCCESS", file=metadata_fh)
         except Exception as e:
