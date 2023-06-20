@@ -55,6 +55,7 @@ os.makedirs(args.output, exist_ok=True)
 
 with open(args.metadata, "w") as metadata_fh, \
     tempfile.TemporaryDirectory(prefix="deleteme_", dir="/lscratch") as tempdir:
+    os.environ['TMPDIR'] = str(tempdir)
     for _, row in df.iterrows():
         filenames = []
         accession = row['run_accession']
@@ -63,7 +64,7 @@ with open(args.metadata, "w") as metadata_fh, \
                 url = row['fastq_ftp_R' + str(i)]
                 md5_expected = row['fastq_md5_R' + str(i)]
 
-                filename = os.path.join(args.output, os.path.basename(url))
+                filename = os.path.join(tempdir, os.path.basename(url))
 
                 # Download the file
                 download_file_using_fire(url, filename)
@@ -83,8 +84,7 @@ with open(args.metadata, "w") as metadata_fh, \
             os.makedirs(outdir, exist_ok=True)
 
             # Assemble the reads with Shovill
-            shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir,
-                               '--tmpdir', tempdir, '--cpus', '1', '--force']
+            shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', outdir, '--cpus', '1']
             logging.info(f"Running {' '.join(shovill_command)}")
             subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
             logging.info(f"[SAMPLE_REPORT] SUCCESS {accession}")
