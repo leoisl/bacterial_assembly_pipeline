@@ -1,4 +1,3 @@
 sample_accession	run_accession	read_count	base_count	fastq_ftp_R1	fastq_ftp_R2	fastq_md5_R1	fastq_md5_R2
-SAMD00008604	DRR008449	2062118	309317700	ftp.sra.ebi.ac.uk/vol1/fastq/DRR008/DRR008449/DRR008449_1.fastq.gz	ftp.sra.ebi.ac.uk/vol1/fastq/DRR008/DRR008449/DRR008449_2.fastq.gz	f2ade9a77872c9506f74bd98c39ef567	728c363d6f7b5833e6fcafd74b6e7039
-SAMD00002817	DRR016177	21980040	4439968080	ftp.sra.ebi.ac.uk/vol1/fastq/DRR016/DRR016177/DRR016177_1.fastq.gz	ftp.sra.ebi.ac.uk/vol1/fastq/DRR016/DRR016177/DRR016177_2.fastq.gz	ab14eca15167e5e10b5d9bacc664f7a8	08824b767c51fd86460a5f3753dc7f8c
-
+SAMEA5178364	ERR3003748	10013	3023926	ftp.sra.ebi.ac.uk/vol1/fastq/ERR300/008/ERR3003748/ERR3003748_1.fastq.gz	ftp.sra.ebi.ac.uk/vol1/fastq/ERR300/008/ERR3003748/ERR3003748_2.fastq.gz	255cf8ae550bc3c9ce1c42c35ae59c7e	43f59d775eb08fce77193b4d0944c8de
+SAMEA5178512	ERR3003895	10028	3028456	ftp.sra.ebi.ac.uk/vol1/fastq/ERR300/005/ERR3003895/ERR3003895_1.fastq.gz	ftp.sra.ebi.ac.uk/vol1/fastq/ERR300/005/ERR3003895/ERR3003895_2.fastq.gz	9762680379d5e2b6daa6c39b78998b6f	53728d4f1aff32f1a97704b4122b8657
