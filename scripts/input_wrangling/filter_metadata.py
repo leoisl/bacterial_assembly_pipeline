@@ -28,6 +28,9 @@ df = df[~df.duplicated(subset='sample_accession') & ~df.duplicated(subset='sampl
 df['read_count'] = pd.to_numeric(df['read_count'], errors='coerce')
 df = df[df['read_count'] >= 1000]
 
+# remove rows where 'sample_accession' contains ";"
+df = df[~df['sample_accession'].str.contains(";")]
+
 # Split fastq_ftp column and expand into new dataframe
 split_df = df['fastq_ftp'].str.split(';', expand=True)
 
