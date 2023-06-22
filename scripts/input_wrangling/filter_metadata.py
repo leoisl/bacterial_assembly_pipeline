@@ -24,8 +24,6 @@ df = df[['sample_accession', 'run_accession', 'fastq_ftp', 'fastq_md5', 'read_co
 # Keep only samples with a single run
 df = df[~df.duplicated(subset='sample_accession') & ~df.duplicated(subset='sample_accession', keep='last')]
 
-df.to_csv("temp.sample_accession.deduplicated.csv", sep='\t', index=False)
-
 # Split fastq_ftp column and expand into new dataframe
 split_df = df['fastq_ftp'].str.split(';', expand=True)
 
