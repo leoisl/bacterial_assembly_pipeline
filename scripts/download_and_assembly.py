@@ -59,7 +59,7 @@ with open(args.metadata, "w") as metadata_fh, \
     os.environ['TMPDIR'] = str(tempdir)
     for _, row in df.iterrows():
         filenames = []
-        accession = row['run_accession']
+        accession = row['sample_accession']
         try:
             for i in range(1, 3):  # For both files R1 and R2
                 url = row['fastq_ftp_R' + str(i)]
