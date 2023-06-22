@@ -24,6 +24,9 @@ df = df[['sample_accession', 'run_accession', 'fastq_ftp', 'fastq_md5', 'read_co
 # Keep only samples with a single run
 df = df[~df.duplicated(subset='sample_accession') & ~df.duplicated(subset='sample_accession', keep='last')]
 
+# remove rows where read_count is less than 1000
+df = df[df['read_count'] >= 1000]
+
 # Split fastq_ftp column and expand into new dataframe
 split_df = df['fastq_ftp'].str.split(';', expand=True)
 
