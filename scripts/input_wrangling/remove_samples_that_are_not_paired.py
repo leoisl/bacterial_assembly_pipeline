@@ -15,8 +15,16 @@ args = parser.parse_args()
 # Read the TSV file
 df = pd.read_csv(args.input_file, delimiter='\t')
 
+# Filter rows to ILLUMINA, WGS, GENOMIC and PAIRED
+df = df[(df['instrument_platform'] == 'ILLUMINA') & (df['library_strategy'] == 'WGS') & (df['library_source'] == 'GENOMIC') & (df['library_layout'] == 'PAIRED')]
+
 # Keep only desired columns
-df = df[['run_accession', 'fastq_ftp', 'fastq_md5', 'read_count', 'base_count']]
+df = df[['sample_accession', 'run_accession', 'fastq_ftp', 'fastq_md5', 'read_count', 'base_count']]
+
+# Keep only samples with a single run
+df = df[~df.duplicated(subset='sample_accession') & ~df.duplicated(subset='sample_accession', keep='last')]
+
+df.to_csv("temp.sample_accession.deduplicated.csv", sep='\t', index=False)
 
 # Split fastq_ftp column and expand into new dataframe
 split_df = df['fastq_ftp'].str.split(';', expand=True)
