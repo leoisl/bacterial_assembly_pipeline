@@ -84,7 +84,7 @@ with open(args.metadata, "w") as metadata_fh, \
             temp_outdir = os.path.join(tempdir, accession)
             shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', temp_outdir, '--cpus', '1']
             logging.info(f"Running {' '.join(shovill_command)}")
-            subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=3600*3)  #3h limit per assembly
 
             # copy temp_outdir to outdir
             outdir = os.path.join(args.output, accession)
