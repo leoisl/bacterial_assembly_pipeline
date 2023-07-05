@@ -1,0 +1,29 @@
+import os
+
+configfile: "config.yaml"
+
+
+def get_assembly_files(dir):
+    return [os.path.join(dir, f) for f in os.listdir(dir) if f.startswith("assembly_")]
+
+def get_metadata_files(dir):
+    return [os.path.join(dir, f) for f in os.listdir(dir) if f.startswith("metadata_")]
+
+
+rule all:
+    input:
+        expand(os.path.join(config["output_dir"], "{file}"),
+            file=(os.path.basename(file) for file in get_assembly_files(config["input_dir"]))),
+        expand(os.path.join(config["output_dir"], "{file}"), file=(os.path.basename(file) for file in get_metadata_files(config["input_dir"])))
+
+
+rule copy_and_verify:
+    input:
+        input_assembly_file = os.path.join(config["input_dir"], "assembly_{batch}.tar.gz"),
+        input_metadata_file = os.path.join(config["input_dir"], "metadata_{batch}.txt"),
+    output:
+        output_assembly_file = os.path.join(config["output_dir"], "assembly_{batch}.tar.gz"),
+        output_metadata_file = os.path.join(config["output_dir"], "metadata_{batch}.txt"),
+    threads: 1
+    resources: mem_mb=200
+    script: "copy_and_verify.sh"
