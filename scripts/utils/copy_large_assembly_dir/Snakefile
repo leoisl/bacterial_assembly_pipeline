@@ -1,4 +1,6 @@
 import os
+import re
+
 
 configfile: "config.yaml"
 
@@ -6,15 +8,25 @@ configfile: "config.yaml"
 def get_assembly_files(dir):
     return [os.path.join(dir, f) for f in os.listdir(dir) if f.startswith("assembly_")]
 
-def get_metadata_files(dir):
-    return [os.path.join(dir, f) for f in os.listdir(dir) if f.startswith("metadata_")]
+def get_batches(dir):
+    def extract_batch_from_assembly_file(filename):
+        match = re.search(r'assembly_(\d+)\.tar\.gz',filename)
+        if match is not None:
+            return int(match.group(1))
+        else:
+            return None
+
+    assembly_files = get_assembly_files(dir)
+    batches = [extract_batch_from_assembly_file(file) for file in assembly_files]
+    return batches
 
 
 rule all:
     input:
-        expand(os.path.join(config["output_dir"], "{file}"),
-            file=(os.path.basename(file) for file in get_assembly_files(config["input_dir"]))),
-        expand(os.path.join(config["output_dir"], "{file}"), file=(os.path.basename(file) for file in get_metadata_files(config["input_dir"])))
+        expand(os.path.join(config["output_dir"], "assembly_{batch}.tar.gz"), batch=get_batches(config["input_dir"])),
+        expand(os.path.join(config["output_dir"], "metadata_{batch}.txt"), batch=get_batches(config["input_dir"])),
+        expand(os.path.join(config["output_dir"], "copied_and_verified_{batch}.flag"), batch=get_batches(config["input_dir"])),
+
 
 
 rule copy_and_verify:
@@ -24,6 +36,7 @@ rule copy_and_verify:
     output:
         output_assembly_file = os.path.join(config["output_dir"], "assembly_{batch}.tar.gz"),
         output_metadata_file = os.path.join(config["output_dir"], "metadata_{batch}.txt"),
+        flag = os.path.join(config["output_dir"], "copied_and_verified_{batch}.flag"),
     threads: 1
     resources: mem_mb=200
     script: "copy_and_verify.sh"
