@@ -18,6 +18,8 @@ parser = argparse.ArgumentParser(description="This script downloads files from p
 parser.add_argument('input_file', metavar='input', type=str, help='the input TSV file path')
 parser.add_argument('output', metavar='output', type=str, help='the output directory path')
 parser.add_argument('metadata', metavar='metadata', type=str, help='the metadata tsv file')
+parser.add_argument('timeout', metavar='timeout', type=int, help='Timeout in seconds')
+parser.add_argument('fast_dir', metavar='fast_dir', type=str, help='Fast temp dir (e.g. /tmp, /scratch, etc...)')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -55,7 +57,7 @@ df = pd.read_csv(args.input_file, delimiter='\t')
 os.makedirs(args.output, exist_ok=True)
 
 with open(args.metadata, "w") as metadata_fh, \
-    tempfile.TemporaryDirectory(prefix="deleteme_", dir="/lscratch") as tempdir:
+    tempfile.TemporaryDirectory(prefix="deleteme_", dir=args.fast_dir) as tempdir:
     os.environ['TMPDIR'] = str(tempdir)
     for _, row in df.iterrows():
         filenames = []
@@ -84,7 +86,7 @@ with open(args.metadata, "w") as metadata_fh, \
             temp_outdir = os.path.join(tempdir, accession)
             shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', temp_outdir, '--cpus', '1']
             logging.info(f"Running {' '.join(shovill_command)}")
-            subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=3600*3)  #3h limit per assembly
+            subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=args.timeout)
 
             # copy temp_outdir to outdir
             outdir = os.path.join(args.output, accession)
@@ -95,7 +97,7 @@ with open(args.metadata, "w") as metadata_fh, \
         except Exception as e:
             logging.info(f"[SAMPLE_REPORT] ERROR {accession}")
             logging.error("An error occurred: %s", str(e))
-            print(f"{accession}\tERROR", file=metadata_fh)
+            print(f"{accession}\tERROR\t{e}", file=metadata_fh)
         finally:
             # Delete the input files
             for filename in filenames:

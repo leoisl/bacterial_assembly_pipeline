@@ -16,16 +16,19 @@ rule download_and_assembly:
         metadata=f"{output_dir}/metadata_{{batch}}.txt"
     shadow: "shallow"
     threads: 1
-    resources: mem_mb=lambda wildcards, attempt: 20000*attempt
+    resources: mem_mb=lambda wildcards, attempt: {1: 20000, 2: 80000}[attempt]
     conda: "env.yaml"
     log: "logs/download_and_assembly_{batch}.log"
+    params:
+        timeout = config["timeout"],
+        fast_dir = config["fast_dir"],
     shell:
         """
         # Create the output directory
         mkdir assembly_out
 
         # Run the Python script on the TSV file
-        python scripts/download_and_assembly.py {input.tsv_file} assembly_out metadata.tsv >{log} 2>&1
+        python scripts/download_and_assembly.py {input.tsv_file} assembly_out metadata.tsv {params.timeout} {params.fast_dir} >{log} 2>&1
 
         # Compress the output directory using tar.gz
         tar czvf {output.assembly_dir} -C assembly_out .

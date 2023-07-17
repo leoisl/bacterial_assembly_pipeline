@@ -1,3 +1,5 @@
 input_dir: 2kk
 output_dir: 2kk_out
 nb_of_batches: 25990
+timeout: 86400  # in seconds, 1 day
+fast_dir: /lscratch

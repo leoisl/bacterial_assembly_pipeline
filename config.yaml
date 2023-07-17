@@ -1,3 +1,5 @@
 input_dir: test_data/input
 output_dir: test_data/output
 nb_of_batches: 2
+timeout: 3600  # in seconds, 1h
+fast_dir: /tmp
