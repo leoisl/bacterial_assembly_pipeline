@@ -76,7 +76,7 @@ with open(args.metadata, "w") as metadata_fh, \
                 md5_actual = compute_md5(filename)
 
                 if md5_actual != md5_expected:
-                    raise ValueError(f"File {filename} MD5 check failed. Expected {md5_expected}, got {md5_actual}")
+                    raise ValueError(f"MD5_check_failed : File {filename} MD5 check failed. Expected {md5_expected}, got {md5_actual}")
                 else:
                     logging.info(f"File {filename} downloaded and MD5 check passed.")
 
