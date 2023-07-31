@@ -1,0 +1,9 @@
+test_data/extract_assemblies_test_data/assembly_0.tar.gz
+test_data/extract_assemblies_test_data/assembly_1.tar.gz
+test_data/extract_assemblies_test_data/assembly_2.tar.gz
+test_data/extract_assemblies_test_data/assembly_3.tar.gz
+test_data/extract_assemblies_test_data/assembly_4.tar.gz
+test_data/extract_assemblies_test_data/assembly_5.tar.gz
+test_data/extract_assemblies_test_data/assembly_6.tar.gz
+test_data/extract_assemblies_test_data/assembly_7.tar.gz
+test_data/extract_assemblies_test_data/assembly_8.tar.gz
