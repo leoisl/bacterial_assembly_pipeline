@@ -20,11 +20,12 @@ rule filter_fasta:
     threads: 1
     resources: mem_mb=1000
     conda: "env.yaml"
+    params: min_contig_length=config["min_contig_length"]
     shell:
         """
         mkdir -p {output}
         find {input} -type f -name '*_contigs.fa.gz' -print0 | while IFS= read -r -d '' file; do
             base=$(basename "$file" _contigs.fa.gz)
-            fastaq filter --min_length 200 "$file" {output}/"$base"_contigs.fa.gz
+            fastaq filter --min_length {params.min_contig_length} "$file" {output}/"$base"_contigs.fa.gz
         done
         """
