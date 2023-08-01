@@ -1,0 +1,30 @@
+configfile: "config.yaml"
+
+import glob
+import os
+
+input_base_dir = config["input_base_dir"]
+output_base_dir = config["output_base_dir"]
+
+
+rule all:
+    input:
+        expand(f"{output_base_dir}/{{batch_dir}}", batch_dir=[os.path.basename(x) for x in glob.glob(f"{input_base_dir}/batch_*")])
+
+
+rule filter_fasta:
+    input:
+        f"{input_base_dir}/{{batch_dir}}"
+    output:
+        directory(f"{output_base_dir}/{{batch_dir}}")
+    threads: 1
+    resources: mem_mb=1000
+    conda: "env.yaml"
+    shell:
+        """
+        mkdir -p {output}
+        find {input} -type f -name '*_contigs.fa.gz' -print0 | while IFS= read -r -d '' file; do
+            base=$(basename "$file" _contigs.fa.gz)
+            fastaq filter --min_length 200 "$file" {output}/"$base"_contigs.fa.gz
+        done
+        """
