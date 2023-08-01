@@ -21,7 +21,7 @@ rule extract_assemblies:
     input:
         input_file=lambda wildcards: batches[int(wildcards.i)]
     output:
-        output_dir=f"{output_dir}/batch_{{i}}"
+        output_dir=directory(f"{output_dir}/batch_{{i}}")
     threads: 1
     resources: mem_mb=2000
     log: "logs/extract_assemblies/batch_{i}.log"
