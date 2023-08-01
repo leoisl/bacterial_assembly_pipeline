@@ -23,7 +23,7 @@ rule extract_assemblies:
     output:
         output_dir=directory(f"{output_dir}/batch_{{i}}")
     threads: 1
-    resources: mem_mb=2000
+    resources: mem_mb=4000
     log: "logs/extract_assemblies/batch_{i}.log"
     shell:
         "python extract_assemblies.py -i {input.input_file} -o {output.output_dir} 2>{log}"
