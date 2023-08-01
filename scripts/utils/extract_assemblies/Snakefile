@@ -14,7 +14,7 @@ batch_numbers = range(len(batches))
 
 rule all:
     input:
-        expand(f"{file_of_batches}/batch_{{i}}", i=batch_numbers)
+        expand(f"{output_dir}/batch_{{i}}", i=batch_numbers)
 
 
 rule extract_assemblies:
