@@ -18,14 +18,19 @@ rule filter_fasta:
     output:
         directory(f"{output_base_dir}/{{batch_dir}}")
     threads: 1
-    resources: mem_mb=1000
+    resources: mem_mb=4000
     conda: "env.yaml"
     params: min_contig_length=config["min_contig_length"]
+    log: "logs/filter_fasta_batch_{batch_dir}.log"
     shell:
         """
+        if [ -e {log} ]; then
+            rm -f {log}
+        fi
+        
         mkdir -p {output}
         find {input} -type f -name '*_contigs.fa.gz' -print0 | while IFS= read -r -d '' file; do
             base=$(basename "$file" _contigs.fa.gz)
-            fastaq filter --min_length {params.min_contig_length} "$file" {output}/"$base"_contigs.fa.gz
+            fastaq filter --min_length {params.min_contig_length} "$file" {output}/"$base"_contigs.fa.gz 2>> {log}
         done
         """
