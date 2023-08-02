@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eux
 
-MEMORY=1000
+MEMORY=4000
 PROFILE="lsf_bacterial_assembly_pipeline"
 LOG_DIR=logs/
 JOB_NAME="snakemake_run_fastaq_pipeline."$(date --iso-8601='minutes')
