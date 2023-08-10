@@ -14,6 +14,7 @@ args = parser.parse_args()
 
 # Read the TSV file
 df = pd.read_csv(args.input_file, delimiter='\t')
+print(f"Full dataset, have {len(df)} entries")
 
 # Move 'sample_accession' to the first column
 column_list = df.columns.tolist()
@@ -29,6 +30,7 @@ pacbio_df.to_csv(args.output_file+".pacbio_wgs_genomic.csv", sep='\t', index=Fal
 # Filter rows to ILLUMINA, WGS, GENOMIC and PAIRED
 df = df[(df['instrument_platform'] == 'ILLUMINA') & (df['library_strategy'] == 'WGS') & (df['library_source'] == 'GENOMIC') & (df['library_layout'] == 'PAIRED')]
 df.to_csv(args.output_file+".illumina_wgs_genomic_paired.csv", sep='\t', index=False)
+print(f"Applied filter for ILLUMINA WGS GENOMIC PAIRED, have {len(df)} entries")
 
 # Output samples with multiple runs
 multiple_runs_df = df[df.duplicated(subset='sample_accession')]
@@ -39,13 +41,17 @@ df = df[['sample_accession', 'run_accession', 'fastq_ftp', 'fastq_md5', 'read_co
 
 # Keep only samples with a single run
 df = df[~df.duplicated(subset='sample_accession') & ~df.duplicated(subset='sample_accession', keep='last')]
+print(f"Applied filter for single-run samples, have {len(df)} entries")
 
 # remove rows where read_count is less than 1000
 df['read_count'] = pd.to_numeric(df['read_count'], errors='coerce')
 df = df[df['read_count'] >= 1000]
+print(f"Applied filter for read_count>=1000, have {len(df)} entries")
+
 
 # remove rows where 'sample_accession' contains ";"
 df = df[~df['sample_accession'].str.contains(";")]
+print(f"Applied filter to remove samples where sample_accession contains ;, have {len(df)} entries")
 
 # Split fastq_ftp column and expand into new dataframe
 split_df = df['fastq_ftp'].str.split(';', expand=True)
@@ -56,6 +62,7 @@ error_df.to_csv(args.error_file, sep='\t', index=False)
 
 # Filter df for rows that are not in error_df
 df = df[~df['run_accession'].isin(error_df['run_accession'])]
+print(f"Applied filter to remove samples that do not have exactly 2 fastqs, have {len(df)} entries")
 
 # Add split columns back to the original dataframe
 df[['fastq_ftp_R1', 'fastq_ftp_R2']] = split_df.loc[df.index, :].iloc[:, 0:2]
@@ -63,9 +70,6 @@ df[['fastq_ftp_R1', 'fastq_ftp_R2']] = split_df.loc[df.index, :].iloc[:, 0:2]
 # Split fastq_md5 column and expand into new dataframe
 split_md5_df = df['fastq_md5'].str.split(';', expand=True)
 df[['fastq_md5_R1', 'fastq_md5_R2']] = split_md5_df.loc[df.index, :].iloc[:, 0:2]
-
-# Remove the original 'fastq_ftp' and 'fastq_md5' columns
-df = df.drop(columns=['fastq_ftp', 'fastq_md5'])
 
 # Cast read_count and base_count to int
 df['read_count'] = df['read_count'].astype(int)
