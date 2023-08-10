@@ -20,6 +20,10 @@ df = df[(df['instrument_platform'] == 'ILLUMINA') & (df['library_strategy'] == '
 
 # Output samples with multiple runs
 multiple_runs_df = df[df.duplicated(subset='sample_accession')]
+# Move 'sample_accession' to the first column
+column_list = multiple_runs_df.columns.tolist()
+column_list.insert(0, column_list.pop(column_list.index('sample_accession')))
+multiple_runs_df = multiple_runs_df.reindex(columns=column_list)
 multiple_runs_df.to_csv(args.output_file+".multiple_runs.csv", sep='\t', index=False)
 
 # Keep only desired columns
