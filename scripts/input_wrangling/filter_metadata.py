@@ -18,6 +18,8 @@ df = pd.read_csv(args.input_file, delimiter='\t')
 # Filter rows to ILLUMINA, WGS, GENOMIC and PAIRED
 df = df[(df['instrument_platform'] == 'ILLUMINA') & (df['library_strategy'] == 'WGS') & (df['library_source'] == 'GENOMIC') & (df['library_layout'] == 'PAIRED')]
 
+df.to_csv(args.output_file+".illumina_wgs_genomic_paired.csv", sep='\t', index=False)
+
 # Output samples with multiple runs
 multiple_runs_df = df[df.duplicated(subset='sample_accession')]
 # Move 'sample_accession' to the first column
