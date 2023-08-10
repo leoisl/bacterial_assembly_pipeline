@@ -15,17 +15,17 @@ args = parser.parse_args()
 # Read the TSV file
 df = pd.read_csv(args.input_file, delimiter='\t')
 
+# Move 'sample_accession' to the first column
+column_list = df.columns.tolist()
+column_list.insert(0, column_list.pop(column_list.index('sample_accession')))
+df = df.reindex(columns=column_list)
+
 # Filter rows to ILLUMINA, WGS, GENOMIC and PAIRED
 df = df[(df['instrument_platform'] == 'ILLUMINA') & (df['library_strategy'] == 'WGS') & (df['library_source'] == 'GENOMIC') & (df['library_layout'] == 'PAIRED')]
-
 df.to_csv(args.output_file+".illumina_wgs_genomic_paired.csv", sep='\t', index=False)
 
 # Output samples with multiple runs
 multiple_runs_df = df[df.duplicated(subset='sample_accession')]
-# Move 'sample_accession' to the first column
-column_list = multiple_runs_df.columns.tolist()
-column_list.insert(0, column_list.pop(column_list.index('sample_accession')))
-multiple_runs_df = multiple_runs_df.reindex(columns=column_list)
 multiple_runs_df.to_csv(args.output_file+".multiple_runs.csv", sep='\t', index=False)
 
 # Keep only desired columns
