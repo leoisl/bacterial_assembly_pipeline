@@ -20,6 +20,12 @@ column_list = df.columns.tolist()
 column_list.insert(0, column_list.pop(column_list.index('sample_accession')))
 df = df.reindex(columns=column_list)
 
+# output pacbio and nanopore tsvs
+ont_df = df[(df['instrument_platform'] == 'OXFORD_NANOPORE') & (df['library_strategy'] == 'WGS') & (df['library_source'] == 'GENOMIC')]
+ont_df.to_csv(args.output_file+".nanopore_wgs_genomic_paired.csv", sep='\t', index=False)
+pacbio_df = df[(df['instrument_platform'] == 'PACBIO_SMRT') & (df['library_strategy'] == 'WGS') & (df['library_source'] == 'GENOMIC')]
+pacbio_df.to_csv(args.output_file+".pacbio_wgs_genomic_paired.csv", sep='\t', index=False)
+
 # Filter rows to ILLUMINA, WGS, GENOMIC and PAIRED
 df = df[(df['instrument_platform'] == 'ILLUMINA') & (df['library_strategy'] == 'WGS') & (df['library_source'] == 'GENOMIC') & (df['library_layout'] == 'PAIRED')]
 df.to_csv(args.output_file+".illumina_wgs_genomic_paired.csv", sep='\t', index=False)
