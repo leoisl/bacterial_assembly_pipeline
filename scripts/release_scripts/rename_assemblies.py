@@ -5,13 +5,16 @@ import argparse
 def rename_files(base_dir):
     # Iterate over all batch folders
     for batch_dir in glob.glob(os.path.join(base_dir, "batch_*")):
-        # Iterate over all .fa.gz files in the batch folder
-        for old_filename in glob.glob(os.path.join(batch_dir, "*.contigs.fa.gz")):
-            # Create the new filename by replacing '.' with '_'
-            new_filename = old_filename.replace('.contigs.fa.gz', '_contigs.fa.gz')
-            # Rename the file
-            os.rename(old_filename, new_filename)
-            print(f"{old_filename} -> {new_filename}")
+        # Iterate over all files in the batch folder
+        for old_filename in os.listdir(batch_dir):
+            if old_filename.endswith('.contigs.fa.gz'):
+                new_filename = "ilmn-" + old_filename
+                old_filepath = os.path.join(batch_dir, old_filename)
+                new_filepath = os.path.join(batch_dir, new_filename)
+
+                # Rename the file
+                # os.rename(old_filepath, new_filename)
+                print(f"{old_filepath} -> {new_filepath}")
 
 def main():
     # Initialize argument parser
