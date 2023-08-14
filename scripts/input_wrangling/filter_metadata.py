@@ -1,6 +1,9 @@
 import pandas as pd
 import argparse
 
+def get_number_of_samples(df):
+    return df["sample_accession"].nunique()
+
 # Initialize the parser
 parser = argparse.ArgumentParser(description="This script filters a TSV file and splits a specific column.")
 
@@ -14,7 +17,7 @@ args = parser.parse_args()
 
 # Read the TSV file
 df = pd.read_csv(args.input_file, delimiter='\t')
-print(f"Full dataset, have {len(df)} entries")
+print(f"Full dataset, have {len(df)} runs, {get_number_of_samples(df)} samples")
 
 # Move 'sample_accession' to the first column
 column_list = df.columns.tolist()
@@ -30,7 +33,7 @@ pacbio_df.to_csv(args.output_file+".pacbio_wgs_genomic.csv", sep='\t', index=Fal
 # Filter rows to ILLUMINA, WGS, GENOMIC and PAIRED
 df = df[(df['instrument_platform'] == 'ILLUMINA') & (df['library_strategy'] == 'WGS') & (df['library_source'] == 'GENOMIC') & (df['library_layout'] == 'PAIRED')]
 df.to_csv(args.output_file+".illumina_wgs_genomic_paired.csv", sep='\t', index=False)
-print(f"Applied filter for ILLUMINA WGS GENOMIC PAIRED, have {len(df)} entries")
+print(f"Applied filter for ILLUMINA WGS GENOMIC PAIRED, have {len(df)} runs, {get_number_of_samples(df)} samples")
 
 # Output samples with multiple runs
 multiple_runs_df = df[df.duplicated(subset='sample_accession')]
@@ -41,17 +44,17 @@ df = df[['sample_accession', 'run_accession', 'fastq_ftp', 'fastq_md5', 'read_co
 
 # Keep only samples with a single run
 df = df[~df.duplicated(subset='sample_accession') & ~df.duplicated(subset='sample_accession', keep='last')]
-print(f"Applied filter for single-run samples, have {len(df)} entries")
+print(f"Applied filter for single-run samples, have {len(df)} runs, {get_number_of_samples(df)} samples")
 
 # remove rows where read_count is less than 1000
 df['read_count'] = pd.to_numeric(df['read_count'], errors='coerce')
 df = df[df['read_count'] >= 1000]
-print(f"Applied filter for read_count>=1000, have {len(df)} entries")
+print(f"Applied filter for read_count>=1000, have {len(df)} runs, {get_number_of_samples(df)} samples")
 
 
 # remove rows where 'sample_accession' contains ";"
 df = df[~df['sample_accession'].str.contains(";")]
-print(f"Applied filter to remove samples where sample_accession contains ;, have {len(df)} entries")
+print(f"Applied filter to remove runs with multiple samples, have {len(df)} runs, {get_number_of_samples(df)} samples")
 
 # Split fastq_ftp column and expand into new dataframe
 split_df = df['fastq_ftp'].str.split(';', expand=True)
@@ -62,7 +65,7 @@ error_df.to_csv(args.error_file, sep='\t', index=False)
 
 # Filter df for rows that are not in error_df
 df = df[~df['run_accession'].isin(error_df['run_accession'])]
-print(f"Applied filter to remove samples that do not have exactly 2 fastqs, have {len(df)} entries")
+print(f"Applied filter to remove samples that do not have exactly 2 fastqs, have {len(df)} runs, {get_number_of_samples(df)} samples")
 
 # Add split columns back to the original dataframe
 df[['fastq_ftp_R1', 'fastq_ftp_R2']] = split_df.loc[df.index, :].iloc[:, 0:2]
