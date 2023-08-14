@@ -19,7 +19,11 @@ df["last_updated"] = df["last_updated"].apply(lambda x: str(x).split("-")[0])
 df["first_created"] = df["first_created"].apply(lambda x: str(x).split("-")[0])
 
 # Print stats
+pd.set_option('display.max_rows', None)
 for column in columns:
     print(f"Stats for column {column}")
-    print(df[column].value_counts())
+    # Filter out counts with value 1
+    value_counts = df[column].value_counts()
+    value_counts_filtered = value_counts[value_counts > 1]
+    print(value_counts_filtered)
     print()
