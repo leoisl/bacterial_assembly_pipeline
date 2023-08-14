@@ -11,9 +11,9 @@ def rename_files(tsv_data):
         new_filename = 'ilmn-' + old_filename
         new_path = os.path.join(os.path.dirname(path), new_filename)
 
-        # Rename the file (uncomment this line when actually renaming files)
-        # os.rename(path, new_path)
+        # Rename the file
         print(f"{path} -> {new_path}")
+        os.rename(path, new_path)
 
         updated_tsv.append(f'{sample}\t{new_path}')
 
