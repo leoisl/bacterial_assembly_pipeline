@@ -1,0 +1,18 @@
+TODO assembly:
+    - Create own id for assemblies
+        - <data>-<sample>
+        - ilmn-SAMEA<xyz>
+	- Create a table:
+	    - own_id, sample_id, run_ids (for the 661k as well)
+    - new release next week
+
+- TODO workflow:
+	- kraken/bracken with gtdb+human on reads;
+	    - experiment first;
+	- CheckM, QUAST and human/mouse-decontamination on contigs to remove host;
+	- Making output of kracken output;
+
+- Think about:
+    - Samples not covered by kraken db
+    - improve mof-compress to easily apply it to assemblies without using other stats
+    - versioning of dataset
