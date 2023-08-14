@@ -15,8 +15,8 @@ args = parser.parse_args()
 
 # Read the TSV file
 df = pd.read_csv(args.input_file, delimiter='\t')
-df["last_updated"] = df["last_updated"].apply(lambda x: x.split("-")[0])
-df["first_created"] = df["first_created"].apply(lambda x: x.split("-")[0])
+df["last_updated"] = df["last_updated"].apply(lambda x: str(x).split("-")[0])
+df["first_created"] = df["first_created"].apply(lambda x: str(x).split("-")[0])
 
 # Print stats
 for column in columns:
