@@ -6,7 +6,7 @@ def rename_files(tsv_data):
     updated_tsv = []
     # Skip the header
     for line in tsv_data[1:]:
-        sample, path = line.split('\t')
+        sample, path = line.strip().split('\t')
         old_filename = os.path.basename(path).strip()
         new_filename = 'ilmn-' + old_filename
         new_path = os.path.join(os.path.dirname(path), new_filename)
