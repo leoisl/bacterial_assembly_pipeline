@@ -24,6 +24,6 @@ for column in columns:
     print(f"Stats for column {column}")
     # Filter out counts with value 1
     value_counts = df[column].value_counts()
-    value_counts_filtered = value_counts[value_counts > 1]
+    value_counts_filtered = value_counts[value_counts >= 100]
     print(value_counts_filtered)
     print()
