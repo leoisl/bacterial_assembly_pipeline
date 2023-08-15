@@ -6,11 +6,8 @@ def process_data(tsv1_path, tsv2_path, output_path):
     df1 = pd.read_csv(tsv1_path, sep='\t')
     df2 = pd.read_csv(tsv2_path, sep='\t')
 
-    # Filter rows to ILLUMINA, WGS, GENOMIC and PAIRED
-    df1_filtered = df1[(df1['instrument_platform'] == 'ILLUMINA') & (df1['library_strategy'] == 'WGS') & (df1['library_source'] == 'GENOMIC') & (df1['library_layout'] == 'PAIRED')]
-
     # Filter rows from the first dataframe where the sample_accession is in the second dataframe
-    df1_filtered = df1_filtered[df1_filtered['sample_accession'].isin(df2['Sample'])]
+    df1_filtered = df1[df1['sample_accession'].isin(df2['Sample'])]
 
     # Move 'sample_accession' to the first column
     column_list = df1_filtered.columns.tolist()
