@@ -10,7 +10,6 @@ parser = argparse.ArgumentParser(description="This script filters a TSV file and
 # Add the arguments
 parser.add_argument('input_file', metavar='input', type=str, help='the input TSV file path')
 parser.add_argument('output_file', metavar='output', type=str, help='the output TSV file path')
-parser.add_argument('error_file', metavar='error', type=str, help='the error TSV file path')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -58,7 +57,7 @@ split_df = df['fastq_ftp'].str.split(';', expand=True)
 
 # Create error dataframe
 error_df = df[split_df.iloc[:, :2].isna().any(axis=1) | ~split_df.iloc[:, 2:].isna().all(axis=1)]
-error_df.to_csv(args.error_file, sep='\t', index=False)
+error_df.to_csv(args.output_file+".error.tsv", sep='\t', index=False)
 
 # Filter df for rows that are not in error_df
 df = df[~df['run_accession'].isin(error_df['run_accession'])]
