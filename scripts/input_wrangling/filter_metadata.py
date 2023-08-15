@@ -39,9 +39,6 @@ print(f"Applied filter for ILLUMINA WGS GENOMIC PAIRED, have {len(df)} runs, {ge
 multiple_runs_df = df[df.duplicated(subset='sample_accession')]
 multiple_runs_df.to_csv(args.output_file+".multiple_runs.csv", sep='\t', index=False)
 
-# Keep only desired columns
-df = df[['sample_accession', 'run_accession', 'fastq_ftp', 'fastq_md5', 'read_count', 'base_count']]
-
 # Keep only samples with a single run
 df = df[~df.duplicated(subset='sample_accession') & ~df.duplicated(subset='sample_accession', keep='last')]
 print(f"Applied filter for single-run samples, have {len(df)} runs, {get_number_of_samples(df)} samples")
@@ -81,3 +78,6 @@ df['base_count'] = df['base_count'].astype(int)
 # Write the result back to a new TSV file
 df.to_csv(args.output_file, sep='\t', index=False)
 
+# Keep only desired columns
+df = df[['sample_accession', 'run_accession', 'fastq_ftp_R1', 'fastq_ftp_R2', 'fastq_md5_R1', 'fastq_md5_R2', 'read_count', 'base_count']]
+df.to_csv(args.output_file+".simplified.tsv", sep='\t', index=False)
