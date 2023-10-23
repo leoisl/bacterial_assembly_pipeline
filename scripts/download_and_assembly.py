@@ -65,6 +65,7 @@ with open(args.metadata, "w") as metadata_fh, \
         accession = row['sample_accession']
 
         temp_outdir = os.path.join(tempdir, accession)
+        os.makedirs(temp_outdir, exist_ok=True)
         reads_dir = temp_outdir if args.keep_reads else tempdir
 
         filenames = []
@@ -90,7 +91,7 @@ with open(args.metadata, "w") as metadata_fh, \
 
             # Assemble the reads with Shovill
             if not args.skip_assembly:
-                shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', temp_outdir, '--cpus', '1']
+                shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', temp_outdir, '--cpus', '1', '--force']
                 logging.info(f"Running {' '.join(shovill_command)}")
                 subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=args.timeout)
 
