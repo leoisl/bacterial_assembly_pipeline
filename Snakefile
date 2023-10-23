@@ -22,7 +22,8 @@ rule download_and_assembly:
     params:
         timeout = config["timeout"],
         fast_dir = config["fast_dir"],
-        skip_assembly = "--skip-assembly" if config["skip_assembly"] else ""
+        skip_assembly = "--skip-assembly" if config["skip_assembly"] else "",
+        keep_reads = "--keep-reads" if config["keep_reads"] else "",
     shell:
         """
         # Create the output directory

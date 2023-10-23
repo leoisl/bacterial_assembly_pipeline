@@ -21,6 +21,7 @@ parser.add_argument('metadata', metavar='metadata', type=str, help='the metadata
 parser.add_argument('timeout', metavar='timeout', type=int, help='Timeout in seconds')
 parser.add_argument('fast_dir', metavar='fast_dir', type=str, help='Fast temp dir (e.g. /tmp, /scratch, etc...)')
 parser.add_argument('--skip-assembly', dest='skip_assembly', action='store_true', help='Skip assembly and only download files')
+parser.add_argument('--keep-reads', dest='keep_reads', action='store_true', help='Keep reads')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -101,10 +102,11 @@ with open(args.metadata, "w") as metadata_fh, \
             logging.error("An error occurred: %s", str(e))
             print(f"{accession}\tERROR\t{e}", file=metadata_fh)
         finally:
-            # Delete the input files
-            for filename in filenames:
-                # Check if the file exists
-                if os.path.exists(filename):
-                    # If it does, remove it
-                    logging.info(f"Deleting {filename}")
-                    os.remove(filename)
+            if not args.keep_reads:
+                # Delete the input files
+                for filename in filenames:
+                    # Check if the file exists
+                    if os.path.exists(filename):
+                        # If it does, remove it
+                        logging.info(f"Deleting {filename}")
+                        os.remove(filename)

@@ -4,3 +4,4 @@ nb_of_batches: 2
 timeout: 3600  # in seconds, 1h
 fast_dir: /tmp
 skip_assembly: False
+keep_reads: True
