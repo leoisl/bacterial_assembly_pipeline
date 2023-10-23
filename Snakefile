@@ -30,9 +30,9 @@ rule download_and_assembly:
         mkdir assembly_out
 
         # Run the Python script on the TSV file
-        python scripts/download_and_assembly.py {input.tsv_file} assembly_out metadata.tsv {params.timeout} {params.fast_dir} {params.skip_assembly} >{log} 2>&1
+        python scripts/download_and_assembly.py {input.tsv_file} assembly_out metadata.tsv {params.timeout} {params.fast_dir} {params.skip_assembly} {params.keep_reads} >{log} 2>&1
 
         # Compress the output directory using tar.gz
-        tar czvf {output.assembly_dir} -C assembly_out .
+        tar czf {output.assembly_dir} -C assembly_out .
         cp metadata.tsv {output.metadata}
         """
