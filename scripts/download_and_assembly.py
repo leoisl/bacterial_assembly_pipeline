@@ -20,6 +20,7 @@ parser.add_argument('output', metavar='output', type=str, help='the output direc
 parser.add_argument('metadata', metavar='metadata', type=str, help='the metadata tsv file')
 parser.add_argument('timeout', metavar='timeout', type=int, help='Timeout in seconds')
 parser.add_argument('fast_dir', metavar='fast_dir', type=str, help='Fast temp dir (e.g. /tmp, /scratch, etc...)')
+parser.add_argument('--skip-assembly', dest='skip_assembly', action='store_true', help='Skip assembly and only download files')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -83,14 +84,15 @@ with open(args.metadata, "w") as metadata_fh, \
                 filenames.append(filename)
 
             # Assemble the reads with Shovill
-            temp_outdir = os.path.join(tempdir, accession)
-            shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', temp_outdir, '--cpus', '1']
-            logging.info(f"Running {' '.join(shovill_command)}")
-            subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=args.timeout)
+            if not args.skip_assembly:
+                temp_outdir = os.path.join(tempdir, accession)
+                shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', temp_outdir, '--cpus', '1']
+                logging.info(f"Running {' '.join(shovill_command)}")
+                subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=args.timeout)
 
-            # copy temp_outdir to outdir
-            outdir = os.path.join(args.output, accession)
-            shutil.copytree(temp_outdir, outdir)
+                # copy temp_outdir to outdir
+                outdir = os.path.join(args.output, accession)
+                shutil.copytree(temp_outdir, outdir)
 
             logging.info(f"[SAMPLE_REPORT] SUCCESS {accession}")
             print(f"{accession}\tSUCCESS", file=metadata_fh)
