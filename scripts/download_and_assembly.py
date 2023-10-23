@@ -62,14 +62,18 @@ with open(args.metadata, "w") as metadata_fh, \
     tempfile.TemporaryDirectory(prefix="deleteme_", dir=args.fast_dir) as tempdir:
     os.environ['TMPDIR'] = str(tempdir)
     for _, row in df.iterrows():
-        filenames = []
         accession = row['sample_accession']
+
+        temp_outdir = os.path.join(tempdir, accession)
+        reads_dir = temp_outdir if args.keep_reads else tempdir
+
+        filenames = []
         try:
             for i in range(1, 3):  # For both files R1 and R2
                 url = row['fastq_ftp_R' + str(i)]
                 md5_expected = row['fastq_md5_R' + str(i)]
 
-                filename = os.path.join(tempdir, os.path.basename(url))
+                filename = os.path.join(reads_dir, os.path.basename(url))
 
                 # Download the file
                 download_file_using_fire(url, filename)
@@ -86,14 +90,14 @@ with open(args.metadata, "w") as metadata_fh, \
 
             # Assemble the reads with Shovill
             if not args.skip_assembly:
-                temp_outdir = os.path.join(tempdir, accession)
                 shovill_command = ['shovill', '--R1', filenames[0], '--R2', filenames[1], '--outdir', temp_outdir, '--cpus', '1']
                 logging.info(f"Running {' '.join(shovill_command)}")
                 subprocess.run(shovill_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=args.timeout)
 
-                # copy temp_outdir to outdir
-                outdir = os.path.join(args.output, accession)
-                shutil.copytree(temp_outdir, outdir)
+
+            # copy temp_outdir to outdir
+            outdir = os.path.join(args.output, accession)
+            shutil.copytree(temp_outdir, outdir)
 
             logging.info(f"[SAMPLE_REPORT] SUCCESS {accession}")
             print(f"{accession}\tSUCCESS", file=metadata_fh)
