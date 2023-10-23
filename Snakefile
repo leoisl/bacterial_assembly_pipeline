@@ -22,13 +22,15 @@ rule download_and_assembly:
     params:
         timeout = config["timeout"],
         fast_dir = config["fast_dir"],
+        skip_assembly = "--skip-assembly" if config["skip_assembly"] else ""
     shell:
         """
         # Create the output directory
         mkdir assembly_out
 
         # Run the Python script on the TSV file
-        python scripts/download_and_assembly.py {input.tsv_file} assembly_out metadata.tsv {params.timeout} {params.fast_dir} >{log} 2>&1
+        python scripts/download_and_assembly.py {input.tsv_file} assembly_out metadata.tsv {params.timeout} \ 
+            {params.fast_dir} {params.skip_assembly} >{log} 2>&1
 
         # Compress the output directory using tar.gz
         tar czvf {output.assembly_dir} -C assembly_out .
